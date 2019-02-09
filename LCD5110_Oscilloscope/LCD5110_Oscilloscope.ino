@@ -20,7 +20,8 @@
 #define key_up    11  
 #define akb       A2   
 #define P         A5   
-#define overclock 16        
+#define overclock 16  
+#define cof 0
 Adafruit_PCD8544 display = Adafruit_PCD8544(7, 6, 4, 3, 2);       
 byte SinU=30;  
 int PWM = 50;         
@@ -175,6 +176,11 @@ void Generator() {
     } 
   } else display.print("HS FREQ");
   if(hag==5){
+    display.setCursor(0,40);
+    display.setTextSize(1);
+    display.print(">>");
+    display.setTextColor(WHITE, BLACK);
+    display.print(" ");
     display.print("PWM ");
     display.print(PWM);
     display.print("%"); 
@@ -378,15 +384,21 @@ void Ayar() {
   }
   display.display();
   display.clearDisplay();
-  EEPROM.write(0, contrast);
-  EEPROM.write(1, BL);
+  EEPROM.write(1, contrast);
+  EEPROM.write(2, BL);
   mainMenu=0;
   setup();
 }
 void setup() { 
   delay(300);  
-  contrast = EEPROM.read(0);
-  BL       = EEPROM.read(1);
+  if ( EEPROM.read(cof) != cof ) {
+      EEPROM.write(cof, cof);
+      EEPROM.write(1, 60);
+      EEPROM.write(2, 1);
+  } else {
+      contrast = EEPROM.read(1);
+      BL       = EEPROM.read(2);
+  }
   pinMode(Ekran, OUTPUT);
   digitalWrite(Ekran, BL);
   byte key_test=0;
